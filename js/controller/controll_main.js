@@ -1,9 +1,13 @@
-define(['Base', 'modules/module_colorPicker'], function(Base, ColorPicker){
+define(['Base', 'modules/module_colorPicker', 'modules/module_swipe'], function(Base, ColorPicker, Swipe){
 	"use strict";
     
     //colorPicker
     var arrColor = ['#FF0000', '#FF00F7', '#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000'];
-    var colorPicker = new ColorPicker('.colorMixerSect', arrColor).init().addSlider();
+    var colorPicker = new ColorPicker('.colorMixerSect', arrColor, 10).init().addSlider();
+
+    //swiper carousel
+    var swipes = new Swipe($('.swiper-container')).init();
+    console.log(swipes);
 
     //PC & MOBILE
     if(Base.agentChk.getDevice() == 'MOBILE'){
@@ -17,7 +21,7 @@ define(['Base', 'modules/module_colorPicker'], function(Base, ColorPicker){
     Main.prototype = {
         resize:function(e){
             var docWidth = $(document).width();
-            console.log(docWidth);
+            swipes.resize();
         }
     }
 

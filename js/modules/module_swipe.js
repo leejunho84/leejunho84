@@ -1,14 +1,48 @@
-define(function(){
+define(['jquery', 'Base'], function($, Base){
 	"use strict";
 
 	//swipe module
-	var Swipe = function(select, options){}
+	var Swipe = function(select, options){
+		var _that = this;
+		_that.opts = $.extend({}, defaults, options);
+		_that.$container = $(select)[0] === $(_that.opts.container)[0] ? $(select) : $(select).find(_that.opts.container);
+		_that.$swiperWrap = _that.$container.find(_that.opts.swipeWrap);
+		_that.$swiper = _that.$swiperWrap.children();
+		_that.$indicatorWrap = $(select).find(_that.opts.indicatorWrap);
+		_that.$indicator = null;
+		_that.swipeLen = _that.$swiper.length;
+		_that.counter = 0;
+		_that.globalIndex = 0;
+		_that.indicatorIndex = 0;
+		_that.oddIS = (_that.swipeLen%2 != 0) ? true : false;
+		_that.arrPos = [];
+		_that.radius = Math.floor(_that.swipeLen / 2);
+		_that.sw = 0, 
+		_that.sh = 0, 
+		_that.swipeWidth = 0, 
+		_that.swipeHeight = 0, 
+		_that.turnPoint = 0, 
+		_that.autoInterval = 0, 
+		_that.translate = 0;
+		_that.startX = 0, 
+		_that.startY = 0, 
+		_that.endX = 0, 
+		_that.endY = 0, 
+		_that.distX = 0, 
+		_that.distY = 0, 
+		_that.touchPos = 0;
+		_that.bubbleIS = true;
+		_that.duration = 0;
+
+		return _that;
+	}
 	
+	var _that;
 	var defaults = {
     	container : '.swiper-wrapper',
     	swipeWrap : '.swiper',
     	indicatorWrap : '.swiper-pagination',
-    	indicatorIS : true,
+    	indicatorIS : false,
     	indicatorDom : '<span></span>',
     	indicatorActiveClass : 'on',
     	listPerView : 1,
@@ -16,89 +50,68 @@ define(function(){
     	autoLoopTime:5000,
     	duration : 500
     };
-
-	var opts = $.extend({}, defaults, options);
-	var _that = this;
-	var $container = $(select)[0] === $(opts.container)[0] ? $(select) : $(select).find(opts.container);
-	var $swiperWrap = $container.find(opts.swipeWrap);
-	var $swiper = $swiperWrap.children();
-	var $indicatorWrap = $(select).find(opts.indicatorWrap);
-	var $indicator = null;
-	var swipeLen = $swiper.length;
-	var counter = 0;
-	var globalIndex = 0;
-	var indicatorIndex = 0;
-	var oddIS = (swipeLen%2 != 0) ? true : false;
-	var arrPos = [];
-	var radius = Math.floor(swipeLen / 2);
-	var sw, sh, swipeWidth, swipeHeight, turnPoint, autoInterval, translate;
-	var startX, startY, endX, endY, distX, distY, touchPos;
-	var bubbleIS = true;
-	var duration = 0;
 	
 	Swipe.prototype = {
 		init:function(){
-			var that = this;
-			duration = support.transforms3d || support.transforms ? opts.duration * 0.001 : opts.duration;
-			if(opts.indicatorIS) that.addIndicator();
-			that.setup();
-			that.autoLoop(true);
-			that.addEvent();
+			_that = this;
+			_that.duration = Base.support.transforms3d || Base.support.transforms ? _that.opts.duration * 0.001 : opts.duration;
+			if(_that.opts.indicatorIS) that.addIndicator();
+			_that.setup();
+			_that.autoLoop(true);
+			_that.addEvent();
+
+			return this;
 		},
 		setup:function(){
-			var that = this;
 			var translate;
 
-			swipeWidth = $swiperWrap.width();
-			$swiper.css({width:swipeWidth});
-			swipeHeight = $swiper.first().height();
-			$swiperWrap.css({height:swipeHeight});
+			_that.swipeWidth = _that.$swiperWrap.width();
+			_that.$swiper.css({width:_that.swipeWidth});
+			_that.swipeHeight = _that.$swiper.first().height();
+			_that.$swiperWrap.css({height:_that.swipeHeight});
 
-			turnPoint = swipeWidth*radius;
+			_that.turnPoint = _that.swipeWidth * _that.radius;
 
-			for(var i=0; i<swipeLen; i++){
-				arrPos[i] = counter;
-				if(i == radius){
-					if(oddIS) counter = counter + swipeWidth;
-					counter = -counter;
+			for(var i=0; i<_that.swipeLen; i++){
+				_that.arrPos[i] = _that.counter;
+				if(i == _that.radius){
+					if(_that.oddIS) _that.counter = _that.counter + _that.swipeWidth;
+					_that.counter = -_that.counter;
 				}
-				counter += swipeWidth;
+				_that.counter += _that.swipeWidth;
 
-				support.setDisplay($swiper.eq(i), i);
-				slideForTransition($swiper.eq(i), i, 0);
+				_that.setDisplay(_that.$swiper.eq(i), i);
+				slideForTransition(_that.$swiper.eq(i), i, 0);
 			}
 		},
 		addEvent:function(){
-			var that = this;
-
-			if(support.touch){
-				support.addEvent($container[0], 'touchstart', onTouchStart);
-				support.addEvent($container[0], 'touchmove', onTouchMove);
-				support.addEvent($container[0], 'touchend', onTouchEnd);
-				support.addEvent($container[0], 'touchcancel', onTouchCancel);
+			if(Base.support.touch){
+				Base.support.addEvent(_that.$container[0], 'touchstart', onTouchStart);
+				Base.support.addEvent(_that.$container[0], 'touchmove', onTouchMove);
+				Base.support.addEvent(_that.$container[0], 'touchend', onTouchEnd);
+				Base.support.addEvent(_that.$container[0], 'touchcancel', onTouchCancel);
 			}else{
-				support.addEvent($container[0], 'mousedown', onTouchStart);
+				Base.support.addEvent(_that.$container[0], 'mousedown', onTouchStart);
 			}
 		},
 		addIndicator:function(){
-			var that = this;
 			var indiTxt = '';
 
-			for(var i=0; i<swipeLen; i++){
-				indiTxt += opts.indicatorDom;
+			for(var i=0; i<_that.swipeLen; i++){
+				indiTxt += _that.opts.indicatorDom;
 			}
 
-			$indicatorWrap.append(indiTxt);
-			$indicator = $indicatorWrap.children();
-			$indicator.eq(globalIndex).addClass(opts.indicatorActiveClass);
+			_that.$indicatorWrap.append(indiTxt);
+			_that.$indicator = _that.$indicatorWrap.children();
+			_that.$indicator.eq(_that.globalIndex).addClass(_that.opts.indicatorActiveClass);
 
-			$indicator.each(function(i){
-				support.addEvent($(this)[0], 'click', function(e){
-					if(!$(this).hasClass(opts.indicatorActiveClass)){
-						$(this).addClass(opts.indicatorActiveClass);
-						globalIndex = $(this).index();
-						that.active();
-						support.setIndicatorActive(globalIndex);
+			_that.$indicator.each(function(i){
+				Base.support.addEvent($(this)[0], 'click', function(e){
+					if(!$(this).hasClass(_that.opts.indicatorActiveClass)){
+						$(this).addClass(_that.opts.indicatorActiveClass);
+						_that.globalIndex = $(this).index();
+						_that.active();
+						_that.setIndicatorActive(_that.globalIndex);
 					}
 				});
 			});
@@ -106,64 +119,75 @@ define(function(){
 		active:function(){
 			var posIndex, zindex;
 
-			for(var i=0; i<swipeLen; i++){
-				posIndex = i - globalIndex;
+			for(var i=0; i<_that.swipeLen; i++){
+				posIndex = i - _that.globalIndex;
 				if(posIndex < 0) {
-					posIndex = i - globalIndex + swipeLen;
+					posIndex = i - _that.globalIndex + _that.swipeLen;
 				}else{
-					posIndex = i - globalIndex;
+					posIndex = i - _that.globalIndex;
 				}
 
 				//duration = (Math.abs(arrPos[posIndex]) == turnPoint) ? '0s':'0.5s';
-				support.setDisplay($swiper.eq(i), posIndex);
-				slideForTransition($swiper.eq(i), posIndex, duration);
+				_that.setDisplay(_that.$swiper.eq(i), posIndex);
+				slideForTransition(_that.$swiper.eq(i), posIndex, _that.duration);
 			}
 
-			if(opts.indicatorIS) support.setIndicatorActive(globalIndex);
+			if(_that.opts.indicatorIS) _that.setIndicatorActive(_that.globalIndex);
 		},
 		nextSlide:function(){
-			var that = this;
-			globalIndex++;
-			if(globalIndex >= swipeLen) globalIndex = 0;
-			that.active();
+			_that.globalIndex++;
+			if(_that.globalIndex >= _that.swipeLen) _that.globalIndex = 0;
+			_that.active();
 		},
 		prevSlide:function(){
-			var that = this;
-			globalIndex--;
-			if(globalIndex < 0) globalIndex = swipeLen - 1;
-			that.active();
+			console.log('prevSlide');
+			_that.globalIndex--;
+			if(_that.globalIndex < 0) _that.globalIndex = _that.swipeLen - 1;
+			_that.active();
 		},
 		resize:function(){
-			var that = this;
-			$swiper.removeAttr('style');
+			_that.$swiper.removeAttr('style');
 
-			counter = 0;
-			globalIndex = 0;
-			arrPos = [];
+			_that.counter = 0;
+			_that.globalIndex = 0;
+			_that.arrPos = [];
 			
-			that.setup();
+			_that.setup();
 		},
 		destroy:function(){
-			var that = this;
-			if(support.touch){
-				support.removeEvent($container[0], 'touchstart', onTouchStart);
-				support.removeEvent($container[0], 'touchmove', onTouchMove);
-				support.removeEvent($container[0], 'touchend', onTouchEnd);
-				support.removeEvent($container[0], 'touchcancel', onTouchCancel);
+			if(Base.support.touch){
+				Base.support.removeEvent(_that.$container[0], 'touchstart', onTouchStart);
+				Base.support.removeEvent(_that.$container[0], 'touchmove', onTouchMove);
+				Base.support.removeEvent(_that.$container[0], 'touchend', onTouchEnd);
+				Base.support.removeEvent(_that.$container[0], 'touchcancel', onTouchCancel);
 			}else{
-				support.removeEvent($container[0], 'mousedown', onTouchStart);
+				Base.support.removeEvent(_that.$container[0], 'mousedown', onTouchStart);
 			}
 		},
 		autoLoop:function(type){
-			if(opts.autoLoopIS){
-				var that = this;
+			if(_that.opts.autoLoopIS){
 				if(type){
-					autoInterval = setInterval(function(){
-						that.nextSlide();
-					}, opts.autoLoopTime);
+					_that.autoInterval = setInterval(function(){
+						_that.nextSlide();
+					}, _that.opts.autoLoopTime);
 				}else{
-					clearInterval(autoInterval);
+					clearInterval(_that.autoInterval);
 				}
+			}
+		},
+		getZindex:function(index){
+			return (Math.abs(_that.arrPos[index]) == 0) ? 10 : 1;
+		},
+		setIndicatorActive : function(index){
+			_that.$indicator.eq(_that.indicatorIndex).removeClass(_that.opts.indicatorActiveClass);
+			_that.indicatorIndex = index;
+			_that.$indicator.eq(_that.indicatorIndex).addClass(_that.opts.indicatorActiveClass);
+		},
+		setDisplay : function($target, index){
+			if(index >= 0 && index <= _that.opts.listPerView || index >= _that.swipeLen-(_that.opts.listPerView+1) && index <= _that.swipeLen-1){
+				$target.css({'display':'block'});
+			}else{
+				$target.css({'display':'none'});
 			}
 		}
 	}
@@ -171,23 +195,32 @@ define(function(){
 	Swipe.prototype.constructor = Swipe;
 
 	function slideForTransition($target, index, fps){
-		if(support.transforms3d || support.transforms){
-			if(support.transforms3d) translate = "translate3d(" + (arrPos[index]) + "px,0,0)";
-			if(support.transforms) translate = "translate(" + (arrPos[index]) + "px,0)";
-			$target.css({"zIndex":support.getZindex(index), "-moz-transition-duration": fps+'s', "-moz-transform": translate, "-ms-transition-duration": fps+'s', "-ms-transform": translate, "-webkit-transition-duration": fps+'s', "-webkit-transform": translate, "transition-duration": fps+'s', "transform": translate});
+		if(Base.support.transforms3d || Base.support.transforms){
+			if(Base.support.transforms3d) _that.translate = "translate3d(" + (_that.arrPos[index]) + "px,0,0)";
+			if(Base.support.transforms) _that.translate = "translate(" + (_that.arrPos[index]) + "px,0)";
+			$target.css({
+				"zIndex":_that.getZindex(index), 
+				"-moz-transition-duration": fps+'s', 
+				"-moz-transform": _that.translate, 
+				"-ms-transition-duration": fps+'s', 
+				"-ms-transform": _that.translate, 
+				"-webkit-transition-duration": fps+'s', 
+				"-webkit-transform": _that.translate, 
+				"transition-duration": fps+'s', 
+				"transform": _that.translate});
 		}else{
-			$target.stop().animate({'left':arrPos[posIndex]}, fps);
+			$target.stop().animate({'left':_that.arrPos[_that.posIndex]}, fps);
 		}
 	}
 
 	function onTouchStart(e){
-		var touchobj = (support.touch) ? e.touches[0] : e;
-		startX = touchobj.clientX;
-		startY = touchobj.clientY;
+		var touchobj = (Base.support.touch) ? e.touches[0] : e;
+		_that.startX = touchobj.clientX;
+		_that.startY = touchobj.clientY;
 
-		if(!support.touch){
-			support.addEvent(document, 'mousemove', onTouchMove);
-			support.addEvent(document, 'mouseup', onTouchEnd);
+		if(!Base.support.touch){
+			Base.support.addEvent(document, 'mousemove', onTouchMove);
+			Base.support.addEvent(document, 'mouseup', onTouchEnd);
 			e.preventDefault();
 		}
 
@@ -195,49 +228,57 @@ define(function(){
 	}
 
 	function onTouchMove(e){
-		var touchobj = (support.touch) ? e.touches[0] : e;
+		var touchobj = (Base.support.touch) ? e.touches[0] : e;
 		var posIndex, translate;
 
-		distX = startX - parseInt(touchobj.clientX);
-		distY = startY - parseInt(touchobj.clientY);
-		touchPos = distX;
+		_that.distX = _that.startX - parseInt(touchobj.clientX);
+		_that.distY = _that.startY - parseInt(touchobj.clientY);
+		_that.touchPos = _that.distX;
 
-		for(var i=0; i<swipeLen; i++){
-			posIndex = i - globalIndex;
+		for(var i=0; i<_that.swipeLen; i++){
+			posIndex = i - _that.globalIndex;
 			if(posIndex < 0) {
-				posIndex = i - globalIndex + swipeLen;
+				posIndex = i - _that.globalIndex + _that.swipeLen;
 			}else{
-				posIndex = i - globalIndex;
+				posIndex = i - _that.globalIndex;
 			}
 
-			if(support.transforms3d){
-				translate = "translate3d(" + (arrPos[posIndex] - touchPos) + "px,0,0)";
-				$swiper.eq(i).css({"-moz-transition-duration": "0s", "-moz-transform": translate, "-ms-transition-duration": "0s", "-ms-transform": translate, "-webkit-transition-duration": "0s", "-webkit-transform": translate, "transition-duration": "0s", "transform": translate});
+			if(Base.support.transforms3d){
+				translate = "translate3d(" + (_that.arrPos[posIndex] - _that.touchPos) + "px,0,0)";
+				_that.$swiper.eq(i).css({
+					"-moz-transition-duration": "0s", 
+					"-moz-transform": translate, 
+					"-ms-transition-duration": "0s", 
+					"-ms-transform": translate, 
+					"-webkit-transition-duration": "0s", 
+					"-webkit-transform": translate, 
+					"transition-duration": "0s", "transform": translate
+				});
 			}else{
-				$swiper.eq(i).css({'left':arrPos[posIndex] - touchPos});
+				_that.$swiper.eq(i).css({'left':_that.arrPos[posIndex] - _that.touchPos});
 			}
 		}
 
-		if(Math.abs(distX) < Math.abs(distY) && bubbleIS){
-			if(support.touch) support.removeEvent($container[0], 'touchmove', onTouchMove);
+		if(Math.abs(_that.distX) < Math.abs(_that.distY) && _that.bubbleIS){
+			if(Base.support.touch) Base.support.removeEvent(_that.$container[0], 'touchmove', onTouchMove);
 		}else{
-			bubbleIS = false;
+			_that.bubbleIS = false;
 			e.preventDefault();
 		}
 	}
 
 	function onTouchEnd(e){
-		if(touchPos > 20 && !bubbleIS) _that.nextSlide();
-		if(touchPos < -20 && !bubbleIS) _that.prevSlide();
-		if(touchPos < 20 && touchPos > -20 && !bubbleIS) _that.active();
-		if(touchPos < 5 && touchPos > 5  && !bubbleIS) return true;
+		if(_that.touchPos > 20 && !_that.bubbleIS) _that.nextSlide();
+		if(_that.touchPos < -20 && !_that.bubbleIS) _that.prevSlide();
+		if(_that.touchPos < 20 && _that.touchPos > -20 && !_that.bubbleIS) _that.active();
+		if(_that.touchPos < 5 && _that.touchPos > 5  && !_that.bubbleIS) return true;
 
-		bubbleIS = true;
-		if(support.touch){
-			support.addEvent($container[0], 'touchmove', onTouchMove);
+		_that.bubbleIS = true;
+		if(Base.support.touch){
+			Base.support.addEvent(_that.$container[0], 'touchmove', onTouchMove);
 		}else{
-			support.removeEvent(document, 'mousemove', onTouchMove);
-			support.removeEvent(document, 'mouseup', onTouchEnd);
+			Base.support.removeEvent(document, 'mousemove', onTouchMove);
+			Base.support.removeEvent(document, 'mouseup', onTouchEnd);
 
 			e.preventDefault();
 		}
@@ -248,61 +289,6 @@ define(function(){
 	function onTouchCancel(e){
 		console.log('touchcancel');
 	}
-
-
-	var support = {
-		addEvent:function($target, evt, func){
-			if(window.addEventListener || document.addEventListener){
-				$target.addEventListener(evt, func);
-			}else{
-				$target.attachEvent('on'+ evt, func);
-			}
-		},
-		removeEvent:function($target, evt, func){
-			if(window.addEventListener){
-				$target.removeEventListener(evt, func);
-			}else{
-				$target.detachEvent('on'+ evt, func);
-			}
-		},
-		getZindex:function(index){
-			return (Math.abs(arrPos[index]) == 0) ? 10 : 1;
-		},
-		setIndicatorActive : function(index){
-			$indicator.eq(indicatorIndex).removeClass(opts.indicatorActiveClass);
-			indicatorIndex = index;
-			$indicator.eq(indicatorIndex).addClass(opts.indicatorActiveClass);
-		},
-		setDisplay : function($target, index){
-			if(index >= 0 && index <= opts.listPerView || index >= swipeLen-(opts.listPerView+1) && index <= swipeLen-1){
-				$target.css({'display':'block'});
-			}else{
-				$target.css({'display':'none'});
-			}
-		},
-        touch : (window.Modernizr && Modernizr.touch === true) || (function () {
-            'use strict';
-            return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
-        })(),
-
-        transforms3d : (window.Modernizr && Modernizr.csstransforms3d === true) || (function () {
-            'use strict';
-            var div = document.createElement('div').style;
-            return ('webkitPerspective' in div || 'MozPerspective' in div || 'OPerspective' in div || 'MsPerspective' in div || 'perspective' in div);
-        })(),
-
-        transforms : (window.Modernizr && Modernizr.csstransforms === true) || (function () {
-            'use strict';
-            var div = document.createElement('div').style;
-            return ('transform' in div || 'WebkitTransform' in div || 'MozTransform' in div || 'msTransform' in div || 'MsTransform' in div || 'OTransform' in div);
-        })(),
-
-        transitions : (window.Modernizr && Modernizr.csstransitions === true) || (function () {
-            'use strict';
-            var div = document.createElement('div').style;
-            return ('transition' in div || 'WebkitTransition' in div || 'MozTransition' in div || 'msTransition' in div || 'MsTransition' in div || 'OTransition' in div);
-        })()
-    }
 
 	return Swipe;
 });

@@ -87,6 +87,11 @@ define(['jquery'], function($){
             'use strict';
             var div = document.createElement('div').style;
             return ('transform' in div || 'WebkitTransform' in div || 'MozTransform' in div || 'msTransform' in div || 'MsTransform' in div || 'OTransform' in div);
+        })(),
+        transitions : (window.Modernizr && Modernizr.csstransitions === true) || (function () {
+            'use strict';
+            var div = document.createElement('div').style;
+            return ('transition' in div || 'WebkitTransition' in div || 'MozTransition' in div || 'msTransition' in div || 'MsTransition' in div || 'OTransition' in div);
         })()
 	}
 

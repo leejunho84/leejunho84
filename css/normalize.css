@@ -18,6 +18,7 @@ html {
 
 body {
   margin: 0;
+  padding: 0;
 }
 
 /* HTML5 display definitions
@@ -422,3 +423,5 @@ td,
 th {
   padding: 0;
 }
+
+li {list-style:none}

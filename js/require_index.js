@@ -42,7 +42,7 @@ require(
         //common Event
         $(window).on({
             resize:function(e){
-                //page.resize();
+                page.resize();
             },
             scroll:function(){
                 common.scroll();
