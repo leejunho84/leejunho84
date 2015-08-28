@@ -140,7 +140,6 @@ define(['jquery', 'Base'], function($, Base){
 			_that.active();
 		},
 		prevSlide:function(){
-			console.log('prevSlide');
 			_that.globalIndex--;
 			if(_that.globalIndex < 0) _that.globalIndex = _that.swipeLen - 1;
 			_that.active();
