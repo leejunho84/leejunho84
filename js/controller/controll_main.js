@@ -1,4 +1,4 @@
-define(['Base', 'modules/module_colorPicker', 'modules/module_swipe'], function(Base, ColorPicker, Swipe){
+define(['Base', 'modules/module_colorPicker', 'modules/module_swipe', 'modules/module_carousel'], function(Base, ColorPicker, Swipe, Carousel){
 	"use strict";
     
     //colorPicker
@@ -7,7 +7,7 @@ define(['Base', 'modules/module_colorPicker', 'modules/module_swipe'], function(
 
     //swiper carousel
     var swipes = new Swipe($('.swiper-container')).init();
-    console.log(swipes);
+    var carousel = new Carousel($('.carousel')).init();
 
     //PC & MOBILE
     if(Base.agentChk.getDevice() == 'MOBILE'){

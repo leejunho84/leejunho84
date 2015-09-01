@@ -10,7 +10,7 @@ define(['jquery'], function($){
             var $activeCon = $container.find(opts.activeCon);
             var activeClass = opts.activeClass;
 
-            init()
+            init();
             function init(){
                 $activeBtn.on({
                     'click.select':function(e){

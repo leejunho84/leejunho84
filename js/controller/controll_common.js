@@ -4,10 +4,10 @@ define(['Base'], function(Base){
 	var Common = function(){}
 	Common.prototype = {
 		scroll:function(){
-			console.log('scroll');
+			//console.log('scroll');
 		},
 		touchend:function(){
-			console.log('touchend');
+			//console.log('touchend');
 		}
 	}
 

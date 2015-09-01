@@ -256,9 +256,9 @@ a {
 
 /*swipe default version*/
 .swiper-container{width:100%;}
-.swiper-wrapper {min-width:100%; overflow:hidden;}
-.swiper-wrapper ul {padding:0;margin:0;}
-.swiper {position:relative; top:0; left:0;}
+.swiper-wrapper {min-width:100%;}
+.swiper-wrapper ul {padding:0;}
+.swiper {overflow:hidden; position:relative; top:0; left:0; margin:0;}
 .swiper li{position:absolute; top:0; left:0; right:0;}
 .swiper li a{display:block;}
 .swiper li a .txt{position:absolute; top:0; left:0;}
@@ -266,3 +266,17 @@ a {
 .swiper-pagination{text-align:center; margin-top:10px;}
 .swiper-pagination span{display:inline-block; width:7px; height:7px; background:gray; margin:0 2px; border-radius:50%;}
 .swiper-pagination span.on{background:#000;}
+
+.carousel{width:100%;}
+.carousel .swiper-wrapper {min-height:100%; overflow:visible; height:400px;}
+.carousel .swiper {min-height:100%;}
+.carousel .swiper li {width:200px; height:100px; left:50%; top:50%; background:gray; margin-top:-50px; margin-left:-100px; box-shadow: 2px 2px 5px #888888;}
+/*section{width:100%; margin-bottom:20px;}
+.flickSect{min-width:100%; overflow:hidden;}
+.isFlicking{position:relative; top:0; left:0; margin:0 30px;}
+.isFlicking li{position:absolute;top:0; left:0; right:0;}
+.isFlicking li a .txt{position:absolute; font-size:2em; font-weight:bold; color:#fff; padding:40px;}
+.isFlicking li a img{width:100%;}
+.flickPagination{text-align:center; margin-top:10px;}
+.flickPagination span{display:inline-block; width:7px; height:7px; background:gray; margin:0 2px; border-radius:50%;}
+.flickPagination span.on{background:#000;}*/

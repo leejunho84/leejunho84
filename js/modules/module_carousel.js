@@ -2,7 +2,7 @@ define(['jquery', 'Base'], function($, Base){
 	"use strict";
 
 	//swipe module
-	var Swipe = function(select, options){
+	var Carousel = function(select, options){
 		var _that = this;
 		_that.opts = $.extend({}, defaults, options);
 		_that.$container = $(select)[0] === $(_that.opts.container)[0] ? $(select) : $(select).find(_that.opts.container);
@@ -15,8 +15,9 @@ define(['jquery', 'Base'], function($, Base){
 		_that.globalIndex = 0;
 		_that.indicatorIndex = 0;
 		_that.oddIS = (_that.swipeLen%2 != 0) ? true : false; // list 총갯수 / 2 가 홀수 인지 짝수인지 판별
-		_that.arrPos = [];
+		_that.arrPosX = [];
 		_that.arrPosY = [];
+		_that.arrPosZ = [];
 		_that.returnIndex = Math.floor(_that.swipeLen / 2);
 		_that.sw = 0, 
 		_that.sh = 0, 
@@ -34,6 +35,10 @@ define(['jquery', 'Base'], function($, Base){
 		_that.touchPos = 0;
 		_that.bubbleIS = true;
 		_that.duration = 0;
+		_that.zIndex = 0;
+		_that.arrCurrentPos = [];
+
+		_that.swipeType = 'default';
 		return _that;
 	}
 	
@@ -51,7 +56,7 @@ define(['jquery', 'Base'], function($, Base){
     	duration : 500
     };
 	
-	Swipe.prototype = {
+	Carousel.prototype = {
 		init:function(){
 			_that = this;
 			_that.duration = Base.support.transforms3d || Base.support.transforms ? _that.opts.duration * 0.001 : opts.duration;
@@ -63,22 +68,28 @@ define(['jquery', 'Base'], function($, Base){
 			return this;
 		},
 		setup:function(){
-			_that.swipeWidth = _that.$swiperWrap.width();
-			_that.$swiper.css({width:_that.swipeWidth});
-			_that.swipeHeight = _that.$swiper.first().height();
-			_that.$swiperWrap.css({height:_that.swipeHeight});
+			var rw = 250;
+			var rh = 100;
+			var rz = 100;
 
-			_that.turnPoint = _that.swipeWidth * _that.returnIndex;
+			var posX = 0;
+			var posY = 0;
+			var posZ = 0;
+			var radian = 0;
 
 			for(var i=0; i<_that.swipeLen; i++){
-				_that.arrPos[i] = _that.counter;
-				if(i == _that.returnIndex){
-					if(_that.oddIS) _that.counter = _that.counter + _that.swipeWidth;
-					_that.counter = -_that.counter;
-				}
-				_that.counter += _that.swipeWidth;
+				radian = ((360 / _that.swipeLen) * i + 90) * (Math.PI/180);
 
-				_that.setDisplay(_that.$swiper.eq(i), i);
+				posX = Math.round(rw * Math.cos(radian));
+				posY = Math.round(rh * Math.sin(radian));
+				posZ = Math.round(rz * Math.atan2(posX, posY));
+				_that.arrPosX[i] = posX;
+				_that.arrPosY[i] = posY;
+
+				if(posZ > 0) _that.arrPosZ[i] = -posZ;
+				else _that.arrPosZ[i] = posZ;
+
+				//_that.setDisplay(_that.$swiper.eq(i), i);
 				slideForTransition(_that.$swiper.eq(i), i, 0);
 			}
 		},
@@ -102,7 +113,6 @@ define(['jquery', 'Base'], function($, Base){
 			_that.$indicatorWrap.append(indiTxt);
 			_that.$indicator = _that.$indicatorWrap.children();
 			_that.$indicator.eq(_that.globalIndex).addClass(_that.opts.indicatorActiveClass);
-
 			_that.$indicator.each(function(i){
 				Base.support.addEvent($(this)[0], 'click', function(e){
 					if(!$(this).hasClass(_that.opts.indicatorActiveClass)){
@@ -126,7 +136,7 @@ define(['jquery', 'Base'], function($, Base){
 				}
 
 				//duration = (Math.abs(arrPos[posIndex]) == turnPoint) ? '0s':'0.5s';
-				_that.setDisplay(_that.$swiper.eq(i), posIndex);
+				//_that.setDisplay(_that.$swiper.eq(i), posIndex);
 				slideForTransition(_that.$swiper.eq(i), posIndex, _that.duration);
 			}
 
@@ -147,7 +157,7 @@ define(['jquery', 'Base'], function($, Base){
 
 			_that.counter = 0;
 			_that.globalIndex = 0;
-			_that.arrPos = [];
+			_that.arrPosX = [];
 			
 			_that.setup();
 		},
@@ -173,7 +183,7 @@ define(['jquery', 'Base'], function($, Base){
 			}
 		},
 		getZindex:function(index){
-			return Math.abs(_that.arrPos[index]) * -1;
+			return Math.abs(_that.arrPosX[index]) * -1;
 			//return (Math.abs(_that.arrPos[index]) == 0) ? 10 : 1;
 		},
 		setIndicatorActive : function(index){
@@ -187,17 +197,30 @@ define(['jquery', 'Base'], function($, Base){
 			}else{
 				$target.css({'display':'none'});
 			}
+		},
+		rtnCurrentPos : function(){
+			var regx = /[(),]/;
+			_that.arrCurrentPos = [];
+
+			for(var i=0; i<_that.swipeLen; i++){
+				var currentPosX = _that.$swiper.eq(i)[0].style.transform.split(regx)[1].replace('px', '');
+				var currentPosY = _that.$swiper.eq(i)[0].style.transform.split(regx)[2].replace('px', '');
+				var arrPos = [];
+				arrPos.push(currentPosX);
+				arrPos.push(currentPosY);
+				_that.arrCurrentPos.push(arrPos);
+			}
 		}
 	}
 
-	Swipe.prototype.constructor = Swipe;
+	Carousel.prototype.constructor = Carousel;
 
 	function slideForTransition($target, index, fps){
 		if(Base.support.transforms3d || Base.support.transforms){
-			if(Base.support.transforms) _that.translate = 'translate(' + _that.arrPos[index] + 'px, 0)';
-			if(Base.support.transforms3d) _that.translate = 'translate3d(' + _that.arrPos[index] + 'px, 0, 0)';
+			if(Base.support.transforms) _that.translate = 'translate(' + _that.arrPosX[index] + 'px,' + _that.arrPosY[index] + 'px)';
+			if(Base.support.transforms3d) _that.translate = 'translate3d(' + _that.arrPosX[index] + 'px, ' + _that.arrPosY[index] + 'px, 0)';
 			$target.css({
-				"zIndex":_that.getZindex(index), 
+				"zIndex":_that.arrPosZ[index], 
 				"-moz-transition-duration": fps+'s', 
 				"-moz-transform": _that.translate, 
 				"-ms-transition-duration": fps+'s', 
@@ -208,7 +231,7 @@ define(['jquery', 'Base'], function($, Base){
 				"transform": _that.translate
 			});
 		}else{
-			$target.stop().animate({'left':_that.arrPos[_that.posIndex]}, fps);
+			$target.stop().animate({'left':_that.arrPosX[_that.posIndex]}, fps);
 		}
 	}
 
@@ -216,6 +239,7 @@ define(['jquery', 'Base'], function($, Base){
 		var touchobj = (Base.support.touch) ? e.touches[0] : e;
 		_that.startX = touchobj.clientX;
 		_that.startY = touchobj.clientY;
+		_that.rtnCurrentPos();
 
 		if(!Base.support.touch){
 			Base.support.addEvent(document, 'mousemove', onTouchMove);
@@ -234,18 +258,15 @@ define(['jquery', 'Base'], function($, Base){
 		_that.distY = _that.startY - parseInt(touchobj.clientY);
 		_that.touchPos = _that.distX;
 
-		for(var i=0; i<_that.swipeLen; i++){
-			posIndex = i - _that.globalIndex;
-			if(posIndex < 0) {
-				posIndex = i - _that.globalIndex + _that.swipeLen;
-			}else{
-				posIndex = i - _that.globalIndex;
-			}
-			
+		/*for(var i=0; i<_that.swipeLen; i++){
+			radian = _that.touchPos * (Math.PI/180);
+			posX = parseInt(_that.arrCurrentPos[i][0]) + Math.round(250 * Math.cos(radian));
+			posY = parseInt(_that.arrCurrentPos[i][1]) + Math.round(100 * Math.sin(radian));
+
 			if(Base.support.transforms3d || Base.support.transforms){
-				if(Base.support.transforms) translate = 'translate(' + (_that.arrPos[posIndex] - _that.touchPos) + 'px, 0)';
-				if(Base.support.transforms3d) translate = 'translate3d(' + (_that.arrPos[posIndex] - _that.touchPos) + 'px, 0, 0)';
-				
+				if(Base.support.transforms) translate = 'translate(' + posX + 'px,' + posY + 'px)';
+				if(Base.support.transforms3d) translate = 'translate3d(' + posX + 'px, ' + posY + 'px, 0)';
+
 				_that.$swiper.eq(i).css({
 					"-moz-transition-duration": "0s", 
 					"-moz-transform": translate, 
@@ -256,9 +277,9 @@ define(['jquery', 'Base'], function($, Base){
 					"transition-duration": "0s", "transform": translate
 				});
 			}else{
-				_that.$swiper.eq(i).css({'left':_that.arrPos[posIndex] - _that.touchPos});
+				_that.$swiper.eq(i).css({'left':_that.arrPosX[posIndex] - _that.touchPos});
 			}
-		}
+		}*/
 
 		if(Math.abs(_that.distX) < Math.abs(_that.distY) && _that.bubbleIS){
 			if(Base.support.touch) Base.support.removeEvent(_that.$container[0], 'touchmove', onTouchMove);
@@ -291,5 +312,5 @@ define(['jquery', 'Base'], function($, Base){
 		console.log('touchcancel');
 	}
 
-	return Swipe;
+	return Carousel;
 });
