@@ -12,9 +12,9 @@ requirejs.config({
         'idangerSwiper':'lib/idangerous/idangerous_2.5.5',
         'iscroll':'lib/iscroll/iscroll_5.1.1',
         'Base':'common/base',
-        'PlugIn':'common/plugin',
+        'PlugIn':'common/plugin',        
         'Common':'controller/controll_common',
-        'controll_main':'controller/controll_main',
+        'controll_main':'controller/controll_main'
     },
     shim:{
         'lazy':{

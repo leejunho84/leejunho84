@@ -37,8 +37,14 @@ define(['jquery', 'Base'], function($, Base){
 		_that.duration = 0;
 		_that.zIndex = 0;
 		_that.arrCurrentPos = [];
+		_that.arrRadian = [];
 
 		_that.swipeType = 'default';
+		_that.startPos = 90; //top:270; down:90; left:180; right:0px;
+		_that.rw = 350;
+		_that.rh = 100;
+		_that.rz = 100;
+
 		return _that;
 	}
 	
@@ -68,21 +74,14 @@ define(['jquery', 'Base'], function($, Base){
 			return this;
 		},
 		setup:function(){
-			var rw = 250;
-			var rh = 100;
-			var rz = 100;
-
-			var posX = 0;
-			var posY = 0;
-			var posZ = 0;
-			var radian = 0;
-
+			
 			for(var i=0; i<_that.swipeLen; i++){
-				radian = ((360 / _that.swipeLen) * i + 90) * (Math.PI/180);
+				var radian = ((360 / _that.swipeLen) * i + _that.startPos) * (Math.PI/180);
+				var posX = Math.round(_that.rw * Math.cos(radian));
+				var posY = Math.round(_that.rh * Math.sin(radian));
+				var posZ = Math.round(_that.rz * Math.atan2(posX, posY));
 
-				posX = Math.round(rw * Math.cos(radian));
-				posY = Math.round(rh * Math.sin(radian));
-				posZ = Math.round(rz * Math.atan2(posX, posY));
+				_that.arrRadian[i] = radian;
 				_that.arrPosX[i] = posX;
 				_that.arrPosY[i] = posY;
 
@@ -125,19 +124,10 @@ define(['jquery', 'Base'], function($, Base){
 			});
 		},
 		active:function(){
-			var posIndex;
-
 			for(var i=0; i<_that.swipeLen; i++){
-				posIndex = i - _that.globalIndex;
-				if(posIndex < 0) {
-					posIndex = i - _that.globalIndex + _that.swipeLen;
-				}else{
-					posIndex = i - _that.globalIndex;
-				}
-
 				//duration = (Math.abs(arrPos[posIndex]) == turnPoint) ? '0s':'0.5s';
 				//_that.setDisplay(_that.$swiper.eq(i), posIndex);
-				slideForTransition(_that.$swiper.eq(i), posIndex, _that.duration);
+				slideForTransition(_that.$swiper.eq(i), _that.rtnCurrentIndex(i), _that.duration);
 			}
 
 			if(_that.opts.indicatorIS) _that.setIndicatorActive(_that.globalIndex);
@@ -199,6 +189,7 @@ define(['jquery', 'Base'], function($, Base){
 			}
 		},
 		rtnCurrentPos : function(){
+			//list x, y 좌표
 			var regx = /[(),]/;
 			_that.arrCurrentPos = [];
 
@@ -210,6 +201,16 @@ define(['jquery', 'Base'], function($, Base){
 				arrPos.push(currentPosY);
 				_that.arrCurrentPos.push(arrPos);
 			}
+		},
+		rtnCurrentIndex:function(index){
+			var posIndex = index - _that.globalIndex;
+			if(posIndex < 0) {
+				posIndex = index - _that.globalIndex + _that.swipeLen;
+			}else{
+				posIndex = index - _that.globalIndex;
+			}
+
+			return posIndex;
 		}
 	}
 
@@ -231,7 +232,8 @@ define(['jquery', 'Base'], function($, Base){
 				"transform": _that.translate
 			});
 		}else{
-			$target.stop().animate({'left':_that.arrPosX[_that.posIndex]}, fps);
+			$target.stop().animate({'left':_that.arrPosX[index], 'top':_that.arrPosY[index], 'zIndex':_that.arrPosZ[index]}, fps);
+			//$target.stop().animate({'left':_that.arrPosX[_that.posIndex]}, fps);
 		}
 	}
 
@@ -239,7 +241,6 @@ define(['jquery', 'Base'], function($, Base){
 		var touchobj = (Base.support.touch) ? e.touches[0] : e;
 		_that.startX = touchobj.clientX;
 		_that.startY = touchobj.clientY;
-		_that.rtnCurrentPos();
 
 		if(!Base.support.touch){
 			Base.support.addEvent(document, 'mousemove', onTouchMove);
@@ -250,24 +251,28 @@ define(['jquery', 'Base'], function($, Base){
 		_that.autoLoop(false);
 	}
 
+
+	var zzz = 0;
 	function onTouchMove(e){
 		var touchobj = (Base.support.touch) ? e.touches[0] : e;
-		var posIndex, translate, posX, posY, radian;
+		var translate;
 
 		_that.distX = _that.startX - parseInt(touchobj.clientX);
 		_that.distY = _that.startY - parseInt(touchobj.clientY);
 		_that.touchPos = _that.distX;
 
-		/*for(var i=0; i<_that.swipeLen; i++){
-			radian = _that.touchPos * (Math.PI/180);
-			posX = parseInt(_that.arrCurrentPos[i][0]) + Math.round(250 * Math.cos(radian));
-			posY = parseInt(_that.arrCurrentPos[i][1]) + Math.round(100 * Math.sin(radian));
+		for(var i=0; i<_that.swipeLen; i++){
+			var radian = _that.touchPos * Math.PI/180;
+			var posX = Math.round(_that.rw * Math.cos(radian + _that.arrRadian[_that.rtnCurrentIndex(i)]));
+			var posY = Math.round(_that.rh * Math.sin(radian + _that.arrRadian[_that.rtnCurrentIndex(i)]));
+			var posZ = Math.round(_that.rz * Math.atan2(posX, posY));
 
 			if(Base.support.transforms3d || Base.support.transforms){
 				if(Base.support.transforms) translate = 'translate(' + posX + 'px,' + posY + 'px)';
 				if(Base.support.transforms3d) translate = 'translate3d(' + posX + 'px, ' + posY + 'px, 0)';
 
 				_that.$swiper.eq(i).css({
+					"zIndex":(posZ > 0) ? -posZ:posZ, 
 					"-moz-transition-duration": "0s", 
 					"-moz-transform": translate, 
 					"-ms-transition-duration": "0s", 
@@ -277,9 +282,9 @@ define(['jquery', 'Base'], function($, Base){
 					"transition-duration": "0s", "transform": translate
 				});
 			}else{
-				_that.$swiper.eq(i).css({'left':_that.arrPosX[posIndex] - _that.touchPos});
+				_that.$swiper.eq(i).css({'left':posX, 'top':posY});
 			}
-		}*/
+		}
 
 		if(Math.abs(_that.distX) < Math.abs(_that.distY) && _that.bubbleIS){
 			if(Base.support.touch) Base.support.removeEvent(_that.$container[0], 'touchmove', onTouchMove);
@@ -290,8 +295,8 @@ define(['jquery', 'Base'], function($, Base){
 	}
 
 	function onTouchEnd(e){
-		if(_that.touchPos > 20 && !_that.bubbleIS) _that.nextSlide();
-		if(_that.touchPos < -20 && !_that.bubbleIS) _that.prevSlide();
+		if(_that.touchPos > 20 && !_that.bubbleIS) _that.prevSlide();
+		if(_that.touchPos < -20 && !_that.bubbleIS) _that.nextSlide();
 		if(_that.touchPos < 20 && _that.touchPos > -20 && !_that.bubbleIS) _that.active();
 		if(_that.touchPos < 5 && _that.touchPos > 5  && !_that.bubbleIS) return true;
 

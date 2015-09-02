@@ -270,7 +270,9 @@ a {
 .carousel{width:100%;}
 .carousel .swiper-wrapper {min-height:100%; overflow:visible; height:400px;}
 .carousel .swiper {min-height:100%;}
-.carousel .swiper li {width:200px; height:100px; left:50%; top:50%; background:gray; margin-top:-50px; margin-left:-100px; box-shadow: 2px 2px 5px #888888;}
+.carousel .swiper li {width:200px; height:100px; left:50%; top:50%; background:gray; margin-top:-50px; margin-left:-100px;}
+
+
 /*section{width:100%; margin-bottom:20px;}
 .flickSect{min-width:100%; overflow:hidden;}
 .isFlicking{position:relative; top:0; left:0; margin:0 30px;}
