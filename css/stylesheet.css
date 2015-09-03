@@ -273,6 +273,11 @@ a {
 .carousel .swiper li {width:200px; height:100px; left:50%; top:50%; background:gray; margin-top:-50px; margin-left:-100px;}
 
 
+#circle{position:relative; top:0; left:50%; width:600px; height:600px; margin-left:-300px; margin-bottom:200px; background:silver; border-radius:50%}
+#circle > i{width:50px; height:50px; position:absolute; top:50%; left:50%; margin:-25px 0 0-25px; text-align:center; line-height:50px; border-radius:50%; background:#000; color:#fff;}
+
+
+
 /*section{width:100%; margin-bottom:20px;}
 .flickSect{min-width:100%; overflow:hidden;}
 .isFlicking{position:relative; top:0; left:0; margin:0 30px;}
