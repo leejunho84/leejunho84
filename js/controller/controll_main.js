@@ -1,4 +1,4 @@
-define(['Base', 'modules/module_colorPicker', 'modules/module_swipe', 'modules/module_carousel', 'modules/module_IllusionCircle'], function(Base, ColorPicker, Swipe, Carousel, Illusion){
+define(['Base', 'modules/module_colorPicker', 'modules/module_swipe', 'modules/module_carousel', 'modules/module_illusionCircle'], function(Base, ColorPicker, Swipe, Carousel, Illusion){
 	"use strict";
     
     //colorPicker
