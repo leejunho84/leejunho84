@@ -8,7 +8,7 @@ define(['Base', 'modules/module_colorPicker', 'modules/module_swipe', 'modules/m
     //swiper carousel
     var swipes = new Swipe($('.swiper-container')).init();
     var carousel = new Carousel($('.carousel')).init();
-    var illusion = new Illusion('#circle').init();
+    //var illusion = new Illusion('#circle').init();
     
 
     //PC & MOBILE
