@@ -42,6 +42,7 @@ define(function(){
 			$container.html(numbering);
 			_that.addEvent();
 		}
+		
 		_that.addEvent = function(){
 			var $btn = $container.find('a');
 			$btn.on('click', function(e){
@@ -107,10 +108,21 @@ var pagiNation = new PagiNation('.paging', {
 	onPageChangeStart:function(pagiNation){
 		pagiNation.setPaging();
 	}
-}).init();*/
+}).init();
+
+*/
 
 
 /*
+
+css : 
+.paging { position: relative; padding: 2px 0 10px; text-align: center; clear: both; line-height: normal; }
+.paging.typeA .btn { overflow: hidden; position: relative; margin: 0 5px; padding: 0 3px; border: 1px solid #dfdfdf; background: #fff url(../img/btn/pg_btn.gif) no-repeat; }
+.paging.typeA .go-prev { background-position: -30px 0; }
+
+.paging.typeA a, .paging.typeA strong { min-width: 22px; height: 28px; line-height: 26px; padding: 1px 4px; border: 0 none; font-size: 14px; color: #888; }
+.paging a, .paging strong { display: inline-block; padding: 1px 4px; vertical-align: middle; }
+
 <p class="paging typeA">
 	<a href="#" class="btn go-first"></a>
 	<a href="#" class="btn go-prev"></a>
@@ -127,6 +139,13 @@ var pagiNation = new PagiNation('.paging', {
 	<a href="#" class="btn go-next"></a>
 	<a href="#" class="btn go-last"></a>
 </p>
+
+var params = {
+	totalList:1000,
+	pagePerView:30,
+	pagePerBlock:10,
+	onPageChangeStart:null
+}
 
 var paging = new Paging('.paging', {
 	totalList:1000,
