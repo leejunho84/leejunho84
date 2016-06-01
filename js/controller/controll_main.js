@@ -6,7 +6,8 @@ define(
         'modules/module_carousel', 
         'modules/module_illusionCircle',
         'modules/module_pagiNation',
-        'modules/module_freeLayer'
+        'modules/module_freeLayer',
+        'modules/module_diff'
     ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer){
         
 	"use strict";
