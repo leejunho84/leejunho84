@@ -27,7 +27,7 @@ define(['Base'], function(Base){
 		_that.$target = $(selector);
 		_that.$container = _that.$target.find(freeLayerOption.container);
 		_that.$list = _that.$target.find(freeLayerOption.list);
-		_that.listTotalNum = _that.$list.lenght;
+		_that.listTotalNum = _that.$list.length;
 		return _that;
 	}
 	FreeLayer.prototype.setLayerPos = function(){
@@ -54,12 +54,12 @@ define(['Base'], function(Base){
 		var index = 0;
 		var minPos = arr[0];
 		if(i >= freeLayerOption.lineNum){
-			arr.forEach(function(){
-				if(minPos > arguments[0]){
-					minPos = arguments[0];
-					index = arguments[1];
+			for(var key in arr){				
+				if(minPos > arr[key]){
+					minPos = arr[key];
+					index = key;
 				}
-			});
+			}
 		}else{
 			index = i;
 		}

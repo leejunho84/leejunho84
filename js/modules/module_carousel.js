@@ -65,7 +65,7 @@ define(['jquery', 'Base'], function($, Base){
 	Carousel.prototype = {
 		init:function(){
 			_that = this;
-			_that.duration = Base.support.transforms3d || Base.support.transforms ? _that.opts.duration * 0.001 : opts.duration;
+			_that.duration = Base.support.transforms3d || Base.support.transforms ? _that.opts.duration * 0.001 : _that.opts.duration;
 			if(_that.opts.indicatorIS) that.addIndicator();
 			_that.setup();
 			_that.autoLoop(true);
@@ -245,7 +245,13 @@ define(['jquery', 'Base'], function($, Base){
 		if(!Base.support.touch){
 			Base.support.addEvent(document, 'mousemove', onTouchMove);
 			Base.support.addEvent(document, 'mouseup', onTouchEnd);
-			e.preventDefault();
+
+			if(Base.agentChk.getBrowser().browser == 'IE' && Base.agentChk.getBrowser().version < 9){
+				e.returnValue = false;
+				e.cancelBubble = true;
+			}else{
+				e.preventDefault();	
+			}
 		}
 
 		_that.autoLoop(false);
@@ -290,7 +296,13 @@ define(['jquery', 'Base'], function($, Base){
 			if(Base.support.touch) Base.support.removeEvent(_that.$container[0], 'touchmove', onTouchMove);
 		}else{
 			_that.bubbleIS = false;
-			e.preventDefault();
+
+			if(Base.agentChk.getBrowser().browser == 'IE' && Base.agentChk.getBrowser().version < 9){
+				e.returnValue = false;
+				e.cancelBubble = true;
+			}else{
+				e.preventDefault();	
+			}
 		}
 	}
 
@@ -307,7 +319,12 @@ define(['jquery', 'Base'], function($, Base){
 			Base.support.removeEvent(document, 'mousemove', onTouchMove);
 			Base.support.removeEvent(document, 'mouseup', onTouchEnd);
 
-			e.preventDefault();
+			if(Base.agentChk.getBrowser().browser == 'IE' && Base.agentChk.getBrowser().version < 9){
+				e.returnValue = false;
+				e.cancelBubble = true;
+			}else{
+				e.preventDefault();	
+			}
 		}
 
 		_that.autoLoop(true);

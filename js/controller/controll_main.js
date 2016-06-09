@@ -15,7 +15,7 @@ define(
     //colorPicker
     //var arrColor = ['#6F62A6', '#B3BF81', '#4F8D9B', '#8D5337', '#DEBA8E', '#9A6A82', '#49DBA8'];
     var arrColor = ['#f7a2c9','#dea6d1','#c5aad8','#a3b2e3','#93b8ea','#7fbeec','#74c1e2','#74c1e2','#70c5c1','#70caac','#77ca98','#8ac692','#a0c485','#b4cb7e','#c8cf7b','#d9c977','#ecba75','#faad75','#faa585','#fa9f9a'];
-    var colorPicker = new ColorPicker('.colorMixerSect', arrColor, 10).init().addSlider();
+    var colorPicker = new ColorPicker('.colorMixerSect', arrColor, 5).init().addSlider();
 
     //swiper carousel
     var swipes = new Swipe($('.swiper-container')).init();
@@ -40,7 +40,7 @@ define(
     var freeLayer = new FreeLayer();
     freeLayer.setLayerOptions({
         lineNum : 4,
-        listMargin: 8
+        listMargin: 10
         //container : '.container',
         //list : '.list',
         //listWidth : 280, 
@@ -57,14 +57,10 @@ define(
 
 
     var Main = function(){}
-    Main.prototype = {
-        resize:function(e){
-            var docWidth = $(document).width();
-            swipes.resize();
-        }
+    Main.prototype.resize = function(e){
+        //var docWidth = $(document).width();
+        //swipes.resize();
     }
-
-    Main.prototype.constructor = Main;
 
     return Main;
 });

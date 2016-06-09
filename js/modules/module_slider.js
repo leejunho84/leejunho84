@@ -27,8 +27,6 @@ define(['Base'], function(Base){
 				Base.support.addEvent(document, 'mousemove', onMove);
 				Base.support.addEvent(document, 'mouseup', onEnd);
 			}
-
-			e.preventDefault();
 		}
 
 		function onMove(e){
@@ -51,6 +49,5 @@ define(['Base'], function(Base){
 		return that;
 	};
 
-	Slider.prototype.constructor = Slider;
 	return Slider;
 });
