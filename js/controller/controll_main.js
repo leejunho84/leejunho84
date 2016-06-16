@@ -24,7 +24,7 @@ define(
 
 
     //pagiNation
-    var pagiNation = PagiNation('.paging', {
+    var pagiNation = new PagiNation('.paging', {
         totalList:1000,
         pagePerView:30,
         pagePerBlock:10,

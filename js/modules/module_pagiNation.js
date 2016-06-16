@@ -7,7 +7,7 @@ define(function(){
 			pagePerView:30,
 			pagePerBlock:10,
 			onPageChangeStart:null
-		}	
+		}
 
 		var opts = $.extend({}, params, param);
 		var _that = this;
@@ -95,7 +95,6 @@ define(function(){
 		}
 	}
 
-	PagiNation.prototype.constructor = PagiNation;
 	return PagiNation;
 });
 
