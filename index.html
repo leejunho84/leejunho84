@@ -184,6 +184,20 @@
         </section>
         <section>
             <style>
+                #canvas {border:1px solid #2b2b2b;}
+                .btncontainer {width:258px; margin:0 auto;}
+            </style>
+            <h2>canvas test</h2>
+            <canvas id="canvas" width="800" height="400"></canvas>
+            <div class="btncontainer">
+                <button data-type="start">시작</button>
+                <button data-type="particle">분할</button>
+                <button data-type="stop">중지/재시작</button>
+                <button data-type="delete">삭제</button>
+            </div>
+        </section>
+        <section>
+            <style>
                 .free-layer-box {}
                 .free-layer-box .container {position:relative; top:0; left:0; margin:0 auto;}
                 .free-layer-box .container .list {position:absolute; top:0; left:0; width:280px; height:300px; background:#2b2b2b;}

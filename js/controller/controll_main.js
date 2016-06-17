@@ -6,9 +6,9 @@ define(
         'modules/module_carousel', 
         'modules/module_illusionCircle',
         'modules/module_pagiNation',
-        'modules/module_freeLayer',
-        'modules/module_diff'
-    ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer){
+        'modules/module_freeLayer',        
+        'modules/module_canvas'
+    ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer, Canvas){
         
 	"use strict";
     
@@ -46,6 +46,28 @@ define(
         //listWidth : 280, 
     }).init('.free-layer-box').setLayerPos();
 
+
+    //canvas
+    var canvas = new Canvas().init();
+    var btn = document.getElementsByTagName('button');
+    for(var i=0; i<btn.length; i++){
+        btn[i].addEventListener('click', function(e){
+            switch(this.getAttribute('data-type')){
+                case 'start':
+                    canvas.start();
+                    break;
+                case 'stop':
+                    canvas.stop();
+                    break;
+                case 'particle':
+                    canvas.particle();
+                    break;
+                case 'delete':
+                    canvas.clearAnimate();
+                    break;
+            }
+        });
+    }
 
 
     //PC & MOBILE
