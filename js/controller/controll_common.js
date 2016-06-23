@@ -1,6 +1,6 @@
 define(['Base'], function(Base){
 	"use strict";
-	
+
 	var Common = function(){}
 	Common.prototype = {
 		scroll:function(){

@@ -1,11 +1,12 @@
-define([jquery], function($){
+define(['jquery'], function($){
 	var template = '<span class="num">{{count}}</span>';
 	var pattern = /{{count}}/g;
 
-	var CoverflowCounter = function(){
+	var CoverflowCounter = function(selector){
 		var _that = this;
-		_that.target = $that.find('em.total');
-		_that.totalCount = $that.find('[data-count]').attr('data-count');
+		_that.$that = $(selector);
+		_that.target = _that.$that.find('em.coverflow-counter__total');
+		_that.totalCount = _that.$that.attr('data-count');
 		_that.init();
 		return _that;
 	}
@@ -15,12 +16,8 @@ define([jquery], function($){
 		_that.target.empty();
 
 		var totalNum = _that.totalCount.length;
-		for(var i=totalNum; i>0; i--){
-			if(i % 3 == 0 && totalNum-i > 0){
-				_that.target.append(',');
-			}
-			_that.target.append(template.replace(pattern, _that.totalCount.charAt(totalNum-i)));
-		}
+		var totalCount = _that.totalCount.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+		_that.target.append(template.replace(pattern, totalCount));
 
 		return this;
 	}

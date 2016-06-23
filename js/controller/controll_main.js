@@ -1,14 +1,15 @@
 define(
     [
         'Base', 
-        'modules/module_colorPicker', 
-        'modules/module_swipe', 
-        'modules/module_carousel', 
+        'modules/module_colorPicker',
+        'modules/module_swipe',
+        'modules/module_carousel',
         'modules/module_illusionCircle',
         'modules/module_pagiNation',
-        'modules/module_freeLayer',        
-        'modules/module_canvas'
-    ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer, Canvas){
+        'modules/module_freeLayer',
+        'modules/module_canvas',
+        'modules/module_coverFlowCounter'
+    ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer, Canvas, CoverFlowCounter){
         
 	"use strict";
     
@@ -32,19 +33,24 @@ define(
             console.log('currentPage : ' + pagiNation.getCurrentPage());
             pagiNation.setPaging();
         }
-    }).init();
+    }).init();  
 
 
 
     //finterest freeLayer
     var freeLayer = new FreeLayer();
     freeLayer.setLayerOptions({
-        lineNum : 4,
+        lineNum : 3,
         listMargin: 10
         //container : '.container',
         //list : '.list',
         //listWidth : 280, 
     }).init('.free-layer-box').setLayerPos();
+
+
+
+    //coverFlow Number
+    var coverFlowCounter = new CoverFlowCounter('.coverflow-counter__wrap');
 
 
     //canvas
@@ -70,6 +76,30 @@ define(
     }
 
 
+    //막대 그래프
+    var $graphWrap = $('.graph__wrap')
+    var maxValue = $graphWrap.attr('aria-maxvalue');
+    var maxValue1 = 400;
+    $('.graph__button').click(function(e){
+        e.preventDefault();
+        console.log('asdf');
+        $graphWrap.find('.graph__line').each(function(i){
+            var $this = $(this);
+            var value = $this.attr('aria-value');
+            var percent = Math.round((value/maxValue)*100);
+            var height = Math.round((maxValue/100)*percent);
+            var percent1 = Math.round((height/maxValue1)*100);
+            $this.css({'left':40 * i});
+
+            console.log(percent + '%, ' +height + 'px, ' + percent1 + '%');
+
+            $this.css({'height':0}).stop().animate({'height':percent+'%'}, 1000, function(){
+                console.log('complete');
+            });
+        });
+    });
+
+
     //PC & MOBILE
     if(Base.agentChk.getDevice() == 'MOBILE'){
         
@@ -78,11 +108,11 @@ define(
     }
 
 
-    var Main = function(){}
+    var Main = function(){};
     Main.prototype.resize = function(e){
         //var docWidth = $(document).width();
         //swipes.resize();
-    }
+    };
 
     return Main;
 });

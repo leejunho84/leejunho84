@@ -34,12 +34,14 @@ define(['Base'], function(Base){
 		var _that = this;
 		var arrHeight = new Array(freeLayerOption.lineNum).repeat(freeLayerOption.startPosY);
 
-
 		_that.$list.each(function(i){
 			var index = _that.getArrIndex(arrHeight, i);
 
 			$(this).css({'top':arrHeight[index], 'left':(index * (freeLayerOption.listWidth + freeLayerOption.listMargin))});
-			arrHeight[index] = arrHeight[index] + $(this).height() + freeLayerOption.listMargin;			
+			arrHeight[index] = arrHeight[index] + $(this).height() + freeLayerOption.listMargin;
+
+			//container height 설정
+			if(arrHeight[index] > _that.$target.height()) _that.$target.css('height', arrHeight[index]);
 		});
 
 		return _that;
