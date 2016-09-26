@@ -1,7 +1,7 @@
 #requireJS#
 requireJs Modules [http://leejunho84.github.io/leejunho84/](http://leejunho84.github.io/leejunho84/)
 
-> **디렉토리 구조**
+**디렉토리 구조**
 ```
 ├── js
    ├── common
