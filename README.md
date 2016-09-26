@@ -1,6 +1,35 @@
 #requireJS#
 requireJs Modules [http://leejunho84.github.io/leejunho84/](http://leejunho84.github.io/leejunho84/)
 
+> **디렉토리 구조**
+```
+├── js
+   ├── common
+   │     ├── base.js
+   │     └── plugin.js
+   ├── controller
+   │     ├── controll_common.js
+   │     └── controll_main.js
+   ├── lib
+   │     └── 외부 라이브러리 ...
+   ├── modules
+   │     ├── module_canvas.js
+   │     ├── module_carousel.js
+   │     ├── module_colorMixer.js
+   │     ├── module_colorPicker.js
+   │     ├── module_coverFlowCounter.js
+   │     ├── module_diff.js
+   │     ├── module_freeLayer.js
+   │     ├── module_pagiNation.js
+   │     ├── module_slider.js
+   │     ├──    ...
+   │
+   ├── require_index.js
+   └── require.js
+
+```
+
+│
 ## slider ColorPicker
 배열로 받은 컬러값의 사이 컬러값 계산
 
