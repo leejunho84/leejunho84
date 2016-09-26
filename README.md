@@ -1,7 +1,7 @@
 #requireJS#
 requireJs Modules [http://leejunho84.github.io/leejunho84/](http://leejunho84.github.io/leejunho84/)
 
-1. slider ColorPicker
+## slider ColorPicker
 배열로 받은 컬러값의 사이 컬러값 계산
 
 ```javascript
@@ -10,7 +10,7 @@ var colorPicker = new ColorPicker('.colorMixerSect', arrColor, 5).init().addSlid
 ```
 
 
-2. Swiper
+## Swiper
 
 ```javascript
 var swipes = new Swipe($('.swiper-container')).init();
@@ -19,7 +19,7 @@ var illusion = new Illusion('#circle');
 ```
 
 
-3. PagiNation
+## PagiNation
 
 ```javascript
 var pagiNation = PagiNation('.paging', {
@@ -35,9 +35,7 @@ var pagiNation = PagiNation('.paging', {
 ```
 
 
-4.freeLayer
-
-pinterest style layout 만들기
+## pinterest style layout
 
 ```javasciprt
 var freeLayer = new FreeLayer();
