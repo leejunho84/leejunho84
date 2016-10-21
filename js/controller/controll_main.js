@@ -7,9 +7,9 @@ define(
         'modules/module_illusionCircle',
         'modules/module_pagiNation',
         'modules/module_freeLayer',
-        'modules/module_canvas',
+        //'modules/module_canvas',
         'modules/module_coverFlowCounter'
-    ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer, Canvas, CoverFlowCounter){
+    ], function(Base, ColorPicker, Swipe, Carousel, Illusion, PagiNation, FreeLayer, CoverFlowCounter){
         
 	"use strict";
     
@@ -54,7 +54,7 @@ define(
 
 
     //canvas
-    var canvas = new Canvas().init();
+    /*var canvas = new Canvas().init();
     var btn = document.getElementsByTagName('button');
     for(var i=0; i<btn.length; i++){
         btn[i].addEventListener('click', function(e){
@@ -73,7 +73,7 @@ define(
                     break;
             }
         });
-    }
+    }*/
 
 
     //막대 그래프
