@@ -1,5 +1,5 @@
 #requireJS#
-requireJs Modules [http://leejunho84.github.io/leejunho84/](http://leejunho84.github.io/leejunho84/)
+requireJs Modules [http://leejunho84.github.io/leejunho84/](http://leejunho84.github.io/requirejs-modules/)
 
 **디렉토리 구조**
 ```
